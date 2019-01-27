@@ -1,6 +1,14 @@
 ![KeystoneJS](http://v3.keystonejs.com/images/logo.svg)
 ===================================
 
+## About Fork
+This is a fork of KeystoneJS meant for a private project. It might work for you. It might not.
+
+ #### Here's the changes implemented:
+
+ - **Object** type for object fields
+ - **List** type for array fields
+
 [![Build Status](https://travis-ci.org/keystonejs/keystone.svg?branch=master)](https://travis-ci.org/keystonejs/keystone)
 
  - [About Keystone](#about)

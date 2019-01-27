@@ -20,26 +20,26 @@ var Footer = React.createClass({
 	},
 	// Render the user
 	renderUser () {
-		const { User, user } = this.props;
+		const { /* User, */ user } = this.props;
 		if (!user) return null;
 
 		return (
 			<span>
 				<span> Signed in as </span>
-				<a href={`${Keystone.adminPath}/${User.path}/${user.id}`} tabIndex="-1" className={css(classes.link)}>
-					{user.name}
-				</a>
+				{/* <a href={`${Keystone.adminPath}/${User.path}/${user.id}`} tabIndex="-1" className={css(classes.link)}> */}
+				{user.name}
+				{/* </a> */}
 				<span>.</span>
 			</span>
 		);
 	},
 	render () {
-		const { backUrl, brand, appversion, version } = this.props;
+		// const { backUrl, brand, appversion, version } = this.props;
 
 		return (
 			<footer className={css(classes.footer)} data-keystone-footer>
 				<Container>
-					<a
+					{/* <a
 						href={backUrl}
 						tabIndex="-1"
 						className={css(classes.link)}
@@ -55,7 +55,7 @@ var Footer = React.createClass({
 					>
 						KeystoneJS
 					</a>
-					<span> version {version}.</span>
+					<span> version {version}.</span> */}
 					{this.renderUser()}
 				</Container>
 			</footer>
@@ -73,8 +73,8 @@ const classes = {
 		boxShadow: '0 -1px 0 rgba(0, 0, 0, 0.1)',
 		color: theme.color.gray40,
 		fontSize: theme.font.size.small,
-		paddingBottom: 30,
-		paddingTop: 40,
+		paddingBottom: 20,
+		paddingTop: 20,
 		textAlign: 'center',
 	},
 	link: {
