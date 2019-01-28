@@ -10,11 +10,6 @@ import { Fields } from 'FieldTypes';
 import { Button, GlyphButton } from '../../../admin/client/App/elemental';
 import InvalidFieldType from '../../../admin/client/App/shared/InvalidFieldType';
 
-let i = 0;
-function generateId () {
-	return i++;
-};
-
 const ItemDom = ({ name, id, onRemove, children }) => (
 	<div style={{
 		borderTop: '2px solid #c5c5c5',
@@ -49,7 +44,7 @@ module.exports = Field.create({
 			value: [
 				...value,
 				{
-					id: generateId(),
+					id: value.length,
 					_isNew: true,
 				},
 			],

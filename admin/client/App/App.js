@@ -49,6 +49,7 @@ const App = (props) => {
 	}
 	// Default current section key to dashboard
 	const currentSectionKey = (currentSection && currentSection.key) || 'dashboard';
+
 	return (
 		<div className={css(classes.wrapper)}>
 			<header>
@@ -81,6 +82,8 @@ const App = (props) => {
 				appversion={Keystone.appversion}
 				backUrl={Keystone.backUrl}
 				brand={Keystone.brand}
+				showFull={Keystone.showFullFooter}
+				showUserLink={Keystone.showUserLink}
 				User={Keystone.User}
 				user={Keystone.user}
 				version={Keystone.version}

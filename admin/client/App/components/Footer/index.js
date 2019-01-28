@@ -17,45 +17,61 @@ var Footer = React.createClass({
 		user: React.PropTypes.object,
 		User: React.PropTypes.object, // eslint-disable-line react/sort-prop-types
 		version: React.PropTypes.string,
+		showFull: React.PropTypes.bool, // eslint-disable-line react/sort-prop-types
+		showUserLink: React.PropTypes.bool, // eslint-disable-line react/sort-prop-types
 	},
 	// Render the user
 	renderUser () {
-		const { /* User, */ user } = this.props;
+		const { User, user, showUserLink } = this.props;
 		if (!user) return null;
 
 		return (
 			<span>
 				<span> Signed in as </span>
-				{/* <a href={`${Keystone.adminPath}/${User.path}/${user.id}`} tabIndex="-1" className={css(classes.link)}> */}
-				{user.name}
-				{/* </a> */}
+				{
+					showUserLink
+						? <a href={`${Keystone.adminPath}/${User.path}/${user.id}`} tabIndex="-1" className={css(classes.link)}>
+							{user.name}
+						</a>
+						:	user.name
+				}
+
 				<span>.</span>
 			</span>
 		);
 	},
 	render () {
-		// const { backUrl, brand, appversion, version } = this.props;
+		const { backUrl, brand, appversion, version, showFull } = this.props;
 
 		return (
 			<footer className={css(classes.footer)} data-keystone-footer>
 				<Container>
-					{/* <a
-						href={backUrl}
-						tabIndex="-1"
-						className={css(classes.link)}
-					>
-						{brand + (appversion ? (' ' + appversion) : '')}
-					</a>
-					<span> powered by </span>
-					<a
-						href="http://keystonejs.com"
-						target="_blank"
-						className={css(classes.link)}
-						tabIndex="-1"
-					>
-						KeystoneJS
-					</a>
-					<span> version {version}.</span> */}
+					{
+						showFull
+						&& <div
+							style={{
+								display: 'inline',
+							}}
+						>
+							<a
+								href={backUrl}
+								tabIndex="-1"
+								className={css(classes.link)}
+							>
+								{brand + (appversion ? (' ' + appversion) : '')}
+							</a>
+							<span> powered by </span>
+							<a
+								href="http://keystonejs.com"
+								target="_blank"
+								className={css(classes.link)}
+								tabIndex="-1"
+							>
+								KeystoneJS
+							</a>
+							<span> version {version}.</span>
+						</div>
+					}
 					{this.renderUser()}
 				</Container>
 			</footer>

@@ -1,4 +1,4 @@
-var async = require('async');
+// var async = require('async');
 var FieldType = require('../Type');
 var util = require('util');
 var utils = require('keystone-utils');
@@ -47,12 +47,11 @@ function validateFieldType (field, path, type) {
  */
 objectarray.prototype.addToSchema = function (schema) {
 	var field = this;
-	var mongoose = this.list.keystone.mongoose;
 
 	var fields = this.fields = {};
 	var fieldsArray = this.fieldsArray = [];
 	var fieldsSpec = this.options.fields;
-	var itemSchema = new mongoose.Schema();
+	var itemSchema = {};
 
 	if (typeof fieldsSpec !== 'object' || !Object.keys(fieldsSpec).length) {
 		throw new Error(
@@ -182,14 +181,12 @@ objectarray.prototype.validateRequiredInput = function (item, data, callback) {
 };
 
 objectarray.prototype.getData = function (item) {
-	var items = item.get(this.path);
-	var fieldsArray = this.fieldsArray;
-	return items.map(function (i) {
-		var result = { id: i.id };
-		for (var field of fieldsArray) {
-			result[field.path] = field.getData(i);
-		}
-		return result;
+	var items = item.get(this.path) || [];
+
+	return items.filter(el => {
+		return !!el;
+	}).map((el, i) => {
+		return { ...el, id: i };
 	});
 };
 
@@ -222,28 +219,10 @@ objectarray.prototype.updateItem = function (item, data, files, callback) {
 		}
 	}
 
-	// NOTE - this method will overwrite the entire array, which is less specific
-	// than it could be. Concurrent saves could lead to race conditions, but we
-	// can make it more clever in a future release; this is otherwise the most
-	// resiliant update method that can be implemented without a lot of complexity
-	var listArray = item.get(this.path);
-	async.map(values, function (value, next) {
-		var prevItem = listArray.id(value.id);
-		var newItem = listArray.create(prevItem);
-		async.forEach(field.fieldsArray, function (nestedField, done) {
-			if (nestedField.updateItem.length === 4) {
-				nestedField.updateItem(newItem, value, files, done);
-			} else {
-				nestedField.updateItem(newItem, value, done);
-			}
-		}, function (err) {
-			next(err, newItem);
-		});
-	}, function (err, updatedValues) {
-		if (err) { return callback(err); }
-		item.set(field.path, updatedValues);
-		callback();
-	});
+	item.set(field.path, values.filter(el => {
+		return !!el;
+	}));
+	callback();
 };
 
 /* Export Field Type */

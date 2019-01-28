@@ -45,12 +45,13 @@ function validateFieldType (field, path, type) {
 object.prototype.addToSchema = function (schema) {
 
 	var field = this;
-	var mongoose = this.list.keystone.mongoose;
+	// var mongoose = this.list.keystone.mongoose;
 
 	var fields = this.fields = {};
 	var fieldsArray = this.fieldsArray = [];
 	var fieldsSpec = this.options.fields;
-	var itemSchema = new mongoose.Schema();
+	// var itemSchema = new mongoose.Schema();
+	var itemSchema = {};
 
 	if (typeof fieldsSpec !== 'object' || !Object.keys(fieldsSpec).length) {
 		throw new Error(
@@ -184,13 +185,9 @@ object.prototype.validateRequiredInput = function (item, data, callback) {
 };
 
 object.prototype.getData = function (item) {
-	var fieldsArray = this.fieldsArray;
-	var result = {};
-	if (item[this.path]) {
-		for (var field of fieldsArray) {
-			result[field.path] = field.getData(item[this.path]);
-		}
-	}
+	var result = item.get(this.path) || {};
+	console.log('result', result);
+
 	return result;
 };
 
