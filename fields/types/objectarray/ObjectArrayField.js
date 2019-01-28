@@ -99,7 +99,7 @@ module.exports = Field.create({
 		this.props.inputNamePrefix = ((a, b) => a ? `${a}[${b}]` : b)(inputNamePrefix, path);
 		return (
 			<div>
-				{value.map((value, index) => {
+				{value && value.map((value, index) => {
 					const { id, _isNew } = value;
 					const name = !_isNew && `${path}[${index}][id]`;
 					const onRemove = e => this.removeItem(index);

@@ -2,6 +2,12 @@
 ===================================
 [![Build Status](https://travis-ci.org/keystonejs/keystone.svg?branch=master)](https://travis-ci.org/keystonejs/keystone)
 
+- [About Keystone](#about)
+ - [Getting Started](#getting-started)
+ - [Community](#community)
+ - [Contributing](#contributing)
+ - [License](#license)
+
 ## About Fork
 This is a fork of KeystoneJS meant for a private project. It might work for you. It might not.
 
@@ -9,12 +15,7 @@ This is a fork of KeystoneJS meant for a private project. It might work for you.
 
  - **Object** type for object fields
  - **ObjectArray** type for array fields
-
- - [About Keystone](#about)
- - [Getting Started](#getting-started)
- - [Community](#community)
- - [Contributing](#contributing)
- - [License](#license)
+ - Fix relationship filtering (force reload of options)
 
 ## About Keystone
 
