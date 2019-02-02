@@ -24,15 +24,16 @@ function compareValues (current, next) {
 
 module.exports = Field.create({
 
-	displayName: 'RelationshipField',
+	displayName: 'RelationshipCustomField',
 	statics: {
-		type: 'Relationship',
+		type: 'RelationshipCustom',
 	},
 
 	getInitialState () {
 		return {
 			value: null,
 			createIsOpen: false,
+			options: [],
 		};
 	},
 
@@ -42,26 +43,30 @@ module.exports = Field.create({
 	},
 
 	componentWillReceiveProps (nextProps) {
-		if (nextProps.value === this.props.value || nextProps.many && compareValues(this.props.value, nextProps.value)) return;
+		if (this.buildFilters(this.props) !== this.buildFilters(nextProps)) {
+			this.loadOptions('', undefined, nextProps);
+		}
+
+		if ((nextProps.value === this.props.value && this.state.value) || nextProps.many && compareValues(this.props.value, nextProps.value)) return;
 		this.loadValue(nextProps.value);
 	},
 
 	shouldCollapse () {
 		if (this.props.many) {
-			// many:true relationships have an Array for a value
+			// many:true relationshipCustoms have an Array for a value
 			return this.props.collapse && !this.props.value.length;
 		}
 		return this.props.collapse && !this.props.value;
 	},
 
-	buildFilters () {
+	buildFilters (props) {
 		var filters = {};
 
-		_.forEach(this.props.filters, (value, key) => {
+		_.forEach(props.filters, (value, key) => {
 			if (typeof value === 'string' && value[0] === ':') {
 				var fieldName = value.slice(1);
 
-				var val = this.props.values[fieldName];
+				var val = props.values[fieldName];
 				if (val) {
 					filters[key] = val;
 					return;
@@ -131,12 +136,19 @@ module.exports = Field.create({
 
 	// NOTE: this seems like the wrong way to add options to the Select
 	loadOptionsCallback: {},
-	loadOptions (input, callback) {
+	loadOptions (input, callback = f => f, props) {
 		// NOTE: this seems like the wrong way to add options to the Select
 		this.loadOptionsCallback = callback;
-		const filters = this.buildFilters();
+		const filters = this.buildFilters(props);
+
+		this.setState({
+			loading: true,
+			value: null,
+			options: [],
+		});
+
 		xhr({
-			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&search=' + input + '&' + filters,
+			url: Keystone.adminPath + '/api/' + props.refList.path + '?basic&search=' + input + '&' + filters,
 			responseType: 'json',
 		}, (err, resp, data) => {
 			if (err) {
@@ -144,6 +156,10 @@ module.exports = Field.create({
 				return callback(null, []);
 			}
 			data.results.forEach(this.cacheItem);
+			this.setState({
+				loading: false,
+				options: data.results,
+			});
 			callback(null, {
 				options: data.results,
 				complete: data.results.length === data.count,
@@ -173,7 +189,7 @@ module.exports = Field.create({
 	onCreate (item) {
 		this.cacheItem(item);
 		if (Array.isArray(this.state.value)) {
-			// For many relationships, append the new item to the end
+			// For many relationshipCustoms, append the new item to the end
 			const values = this.state.value.map((item) => item.id);
 			values.push(item.id);
 			this.valueChanged(values.join(','));
@@ -198,11 +214,12 @@ module.exports = Field.create({
 				{/* This input ensures that an empty value is submitted when no related items are selected */}
 				{emptyValueInput}
 				{/* This input element fools Safari's autocorrect in certain situations that completely break react-select */}
-				<input type="text" style={{ position: 'absolute', width: 1, height: 1, zIndex: -1, opacity: 0 }} tabIndex="-1" />
+				<input type="text" style={{ position: 'absolute', width: 1, height: 1, zIndex: -1, opacity: 0 }} tabIndex="-1"/>
 				<Select.Async
 					multi={this.props.many}
 					disabled={noedit}
-					loadOptions={this.loadOptions}
+					loadOptions={(text, cb) => this.loadOptions(text, cb, this.props)}
+					options={this.state.options}
 					labelKey="name"
 					name={inputName}
 					onChange={this.valueChanged}
@@ -219,7 +236,7 @@ module.exports = Field.create({
 		//   when importing the CreateForm using: import CreateForm from '../../../admin/client/App/shared/CreateForm';
 		//   CreateForm was imported as a blank object. This stack overflow post suggested lazilly requiring it:
 		// http://stackoverflow.com/questions/29807664/cyclic-dependency-returns-empty-object-in-react-native
-		// TODO: Implement this somewhere higher in the app, it breaks the encapsulation of the RelationshipField component
+		// TODO: Implement this somewhere higher in the app, it breaks the encapsulation of the RelationshipCustomField component
 		const CreateForm = require('../../../admin/client/App/shared/CreateForm');
 		return (
 			<Group block>
